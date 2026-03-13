@@ -413,7 +413,7 @@ window.addEventListener("resize", onResize);
            NAVIGATION
         ════════════════════════════════════════════ */
 const PAGE_TITLES = {
-  resale: () => `Resale <em>${t("nav_resale")}</em>`,
+  resale: () => `<em>${t("nav_resale")}</em>`,
   rental: () => `<em>${t("nav_rental")}</em>`,
   saved: () => `<em>${t("nav_saved")}</em>`,
   cats: () => `<em>${t("nav_cats")}</em>`,
