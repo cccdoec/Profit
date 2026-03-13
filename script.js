@@ -334,36 +334,50 @@ function onResize() {
   const w = window.innerWidth;
   const body = document.body;
   const bn = document.getElementById("bottomNav");
+  const sb = document.getElementById("sidebar");
   const so = document.getElementById("sidebarOverlay");
 
   if (w <= MOBILE_BP) {
-    // bottom nav ON, sidebar off-canvas
+    // mobile: bottom nav on, sidebar off-canvas
     bn.style.display = "block";
     body.classList.add("has-bottom-nav");
-    // hide sidebar overlay ref — handled by mobile-open class
+    // ensure overlay is in DOM but hidden when sidebar closed
+    if (!sb.classList.contains("mobile-open")) {
+      so.style.display = "none";
+    }
   } else {
-    // no bottom nav
+    // desktop/tablet: hide bottom nav, close mobile sidebar
     bn.style.display = "none";
     body.classList.remove("has-bottom-nav");
-    // close mobile sidebar if open
-    document.getElementById("sidebar").classList.remove("mobile-open");
-    so.classList.add("hidden");
+    sb.classList.remove("mobile-open");
+    so.style.display = "none";
   }
 }
 
 function openMobileSidebar() {
-  document.getElementById("sidebar").classList.add("mobile-open");
-  document.getElementById("sidebarOverlay").classList.remove("hidden");
+  const sb = document.getElementById("sidebar");
+  const so = document.getElementById("sidebarOverlay");
+  sb.classList.add("mobile-open");
+  so.style.display = "block";
 }
 function closeMobileSidebar() {
-  document.getElementById("sidebar").classList.remove("mobile-open");
-  document.getElementById("sidebarOverlay").classList.add("hidden");
+  const sb = document.getElementById("sidebar");
+  const so = document.getElementById("sidebarOverlay");
+  sb.classList.remove("mobile-open");
+  so.style.display = "none";
 }
 function toggleSidebarCollapse() {
-  document.getElementById("sidebar").classList.toggle("collapsed");
+  // on 600-900px range, toggle .expanded (sidebar starts collapsed via CSS)
+  // on >900px, toggle .collapsed (sidebar starts expanded)
+  const sb = document.getElementById("sidebar");
+  if (window.innerWidth <= 900) {
+    sb.classList.toggle("expanded");
+  } else {
+    sb.classList.toggle("collapsed");
+  }
 }
 function handleSidebarToggle() {
-  if (window.innerWidth <= 600) {
+  if (window.innerWidth <= MOBILE_BP) {
     const sb = document.getElementById("sidebar");
     if (sb.classList.contains("mobile-open")) closeMobileSidebar();
     else openMobileSidebar();
@@ -421,6 +435,7 @@ function goPage(p) {
   document.getElementById("scrollBody").scrollTop = 0;
   if (p === "saved") renderSavedPage();
   if (p === "cats") renderCatPage();
+  closeLangMenu();
   if (window.innerWidth <= MOBILE_BP) closeMobileSidebar();
 }
 
