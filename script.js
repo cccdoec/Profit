@@ -304,12 +304,17 @@ function applyI18n() {
   });
   const si = document.getElementById("searchInput");
   if (si) si.placeholder = t("search_ph");
+  const lb = document.getElementById("langLabel");
+  if (lb) lb.textContent = LANG_LABELS[ST.lang] || ST.lang.toUpperCase();
   rebuildSelects();
   updateBadges();
 }
+const LANG_LABELS = { en: "Language", ru: "Язык", uk: "Мова" };
 function setLang(l) {
   ST.lang = l;
-  document.getElementById("langSel").value = l;
+  const lb = document.getElementById("langLabel");
+  if (lb) lb.textContent = LANG_LABELS[l] || l.toUpperCase();
+  closeLangMenu();
   applyI18n();
   renderResaleObjs();
   renderRentalObjs();
@@ -356,6 +361,36 @@ function closeMobileSidebar() {
 }
 function toggleSidebarCollapse() {
   document.getElementById("sidebar").classList.toggle("collapsed");
+}
+function handleSidebarToggle() {
+  if (window.innerWidth <= 600) {
+    const sb = document.getElementById("sidebar");
+    if (sb.classList.contains("mobile-open")) closeMobileSidebar();
+    else openMobileSidebar();
+  } else {
+    toggleSidebarCollapse();
+  }
+}
+function toggleLangMenu(e) {
+  e.stopPropagation();
+  const m = document.getElementById("langMenu");
+  const isOpen = m.classList.contains("open");
+  if (isOpen) {
+    m.classList.remove("open");
+  } else {
+    m.classList.add("open");
+    updateLangMenu();
+  }
+}
+function closeLangMenu() {
+  document.getElementById("langMenu")?.classList.remove("open");
+}
+function updateLangMenu() {
+  const btns = document.querySelectorAll("#langMenu button");
+  btns.forEach((b) => {
+    const l = b.getAttribute("onclick").match(/'(\w+)'/)?.[1];
+    b.classList.toggle("active", l === ST.lang);
+  });
 }
 
 window.addEventListener("resize", onResize);
@@ -645,23 +680,21 @@ function syncR(id) {
     ["q", "qty"],
   ].forEach(([k, f]) => {
     const el = document.getElementById(`ro_${id}_${k}`);
-    if (el) o[f] = el.value;
+    if (!el) return;
+    if (k === "c") {
+      const v = parseFloat(el.value);
+      if (!isNaN(v) && v > 100) {
+        el.value = "100";
+        o[f] = "100";
+        return;
+      }
+    }
+    o[f] = el.value;
   });
   const ne = document.getElementById(`ro_${id}_n`);
   if (ne) o.name = ne.value;
   updateResaleResults();
 }
-
-function clampCommission(el) {
-  const v = parseFloat(el.value);
-  if (!isNaN(v) && v > 100) {
-    el.value = 100;
-  }
-  if (!isNaN(v) && v < 0) {
-    el.value = 0;
-  }
-}
-
 function updateResaleResults() {
   rObjs.forEach((o) => {
     const r = calcR(o.id);
@@ -1504,7 +1537,8 @@ loadSt();
 const sysLang = (navigator.language || "en").substring(0, 2);
 if (!["en", "ru", "uk"].includes(ST.lang))
   ST.lang = ["en", "ru", "uk"].includes(sysLang) ? sysLang : "en";
-document.getElementById("langSel").value = ST.lang;
+const lb = document.getElementById("langLabel");
+if (lb) lb.textContent = LANG_LABELS[ST.lang] || ST.lang.toUpperCase();
 
 applyI18n();
 rebuildSelects();
