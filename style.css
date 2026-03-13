@@ -307,12 +307,12 @@ body {
 }
 
 .sidebar-footer {
-    padding: .5rem .6rem;
+    padding: .7rem .8rem;
     border-top: 1px solid var(--b0);
     flex-shrink: 0;
     display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 6px;
 }
 
 /* ────── COLLAPSED SIDEBAR ────── */
@@ -338,9 +338,14 @@ body {
 }
 
 .sidebar.collapsed .sidebar-footer {
-    justify-content: center;
-    flex-direction: column;
     align-items: center
+}
+
+.sidebar.collapsed .sf-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    justify-content: center
 }
 
 /* ────── MOBILE OVERLAY ────── */
@@ -350,7 +355,6 @@ body {
     inset: 0;
     background: rgba(0, 0, 0, .5);
     z-index: 29;
-    backdrop-filter: blur(2px);
 }
 
 /* ════════════════════════════════════════════
@@ -554,7 +558,7 @@ body.has-bottom-nav .scroll-body {
     }
 
     .sidebar.mobile-open .sidebar-footer {
-        flex-direction: row !important;
+        flex-direction: column !important;
         align-items: stretch !important
     }
 
@@ -568,15 +572,6 @@ body.has-bottom-nav .scroll-body {
 
     body.has-bottom-nav .scroll-body {
         padding-bottom: calc(var(--bottom-nav-h) + 1.5rem)
-    }
-
-    /* hide sidebar toggle from topbar on mobile — show hamburger instead */
-    .sidebar-toggle-desktop {
-        display: none !important
-    }
-
-    .sidebar-toggle-mobile {
-        display: flex !important
     }
 }
 
@@ -1171,23 +1166,23 @@ select {
     margin-top: 1rem
 }
 
-/* Small footer buttons in sidebar */
+/* Footer buttons in sidebar */
 .sf-btn {
-    flex: 1;
-    height: 32px;
-    padding: 0 8px;
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: .04em;
     color: var(--text2);
     background: var(--surface2);
     border: 1px solid var(--b0);
-    border-radius: var(--rad-xs);
+    border-radius: var(--rad-s);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 7px;
     transition: all .15s;
     white-space: nowrap;
     overflow: hidden;
@@ -1195,7 +1190,62 @@ select {
 
 .sf-btn:hover {
     color: var(--text);
-    border-color: var(--b1)
+    border-color: var(--b1);
+    background: var(--surface3)
+}
+
+
+/* Language dropdown */
+.lang-wrap {
+    position: relative;
+    width: 100%
+}
+
+.lang-menu {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    border: 1px solid var(--b1);
+    border-radius: var(--rad-s);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .28);
+    z-index: 200;
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+    transition: opacity .18s var(--ease), transform .18s var(--ease);
+}
+
+.lang-menu.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto
+}
+
+.lang-menu button {
+    width: 100%;
+    padding: 11px 14px;
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text2);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background .12s, color .12s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.lang-menu button:hover {
+    background: var(--surface2);
+    color: var(--text)
+}
+
+.lang-menu button.active {
+    color: var(--accent);
+    background: var(--a-d)
 }
 
 /* Toast */
@@ -1325,9 +1375,4 @@ select {
 .tb-btn:hover {
     border-color: var(--b1);
     color: var(--text)
-}
-
-/* desktop toggle: show; mobile: hide until overridden */
-.sidebar-toggle-mobile {
-    display: none
 }
